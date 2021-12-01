@@ -13,6 +13,29 @@ pipeline {
 				dependencyCheck additionalArguments: '--format HTML --format XML --suppression suppression.xml', odcInstallation: 'Default'
 			}
 		}
+		
+		stage('Unit Test') {
+            		agent {
+               	 		docker {
+    			        		image 'composer:latest'
+                    
+                			}
+	        		}
+	        
+			    steps {
+				sh 'composer install'
+				echo 'Testing Phase'
+				sh './vendor/bin/phpunit --log-junit logs/unitreport.xml -c tests/phpunit.xml tests'
+			    }
+            
+			    post {
+				always {
+					junit testResults: 'logs/unitreport.xml'
+				}
+			    }
+       			 }
+		
+		
 	}	
 	post {
 		success {
