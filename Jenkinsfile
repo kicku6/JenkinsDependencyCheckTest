@@ -34,8 +34,8 @@ pipeline {
 				}
 			    }
        			 }
-		stage('Integration Test'){
-				stage('Deploy'){
+		stage('Start Integration Test'){
+				steps {
 					agent any
 					steps {
 						sh 'chmod +x ./jenkins/scripts/deploy.sh'
@@ -44,25 +44,27 @@ pipeline {
 						
 					}
 				}
-				stage ('Headless Browser Test') {
-					agent {
-						docker {
-							image 'maven:3-alphine'
-							args '-v /root/.m2:/root/.m2'
-						}
-					}
-					steps {
-						sh 'mvn -B -DskipTests clean package'
-						sh 'mvn test'
-					}
-					post {
-						always {
-							sh './jenkins/scripts/kill.sh'
-							junit 'target/surefire-reports/*.xml'
-						}
-					}
+		}
+		stage ('Headless Browser Test') {
+			agent {
+				docker {
+					image 'maven:3-alphine'
+					args '-v /root/.m2:/root/.m2'
 				}
 			}
+			steps {
+				sh 'mvn -B -DskipTests clean package'
+				sh 'mvn test'
+			}
+			post {
+				always {
+					sh 'chmod +x ./jenkins/scripts/kill.sh'
+					sh './jenkins/scripts/kill.sh'
+					junit 'target/surefire-reports/*.xml'
+				}
+			}
+				
+		}
 		
 		
 	}	
