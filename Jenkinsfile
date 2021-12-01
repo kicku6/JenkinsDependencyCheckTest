@@ -1,8 +1,5 @@
 pipeline {
 	agent any
-	enviroment {
-		CI = 'true'
-	}
 		
 	stages {
 		stage('Checkout SCM') {
