@@ -80,4 +80,11 @@ stage('Unit Test') {
             }
 	    }
     }
+	post {
+		success {
+					sh 'chmod +x ./kill.sh'
+					sh './kill.sh'
+				}
+		}
+			
 }
