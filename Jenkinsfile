@@ -41,7 +41,7 @@ pipeline {
 					steps {
 						sh './jenkins/scripts/deploy.sh'
 						input message: 'Finisheed using the web site? (Click "Proceed" to contiue)'
-						sh './jenkins/scripts/kill.sh'
+						
 					}
 				}
 				stage ('Headless Browser Test') {
@@ -57,6 +57,7 @@ pipeline {
 					}
 					post {
 						always {
+							sh './jenkins/scripts/kill.sh'
 							junit 'target/surefire-reports/*.xml'
 						}
 					}
