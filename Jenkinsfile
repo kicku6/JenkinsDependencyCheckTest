@@ -34,7 +34,35 @@ pipeline {
 				}
 			    }
        			 }
-		
+		stage('Integration Test'){
+			parallel {
+				stage('Deploy'){
+					agent any
+					steps {
+						sh './jenkins/scripts/deploy.sh'
+						input message: 'Finisheed using the web site? (Click "Proceed" to contiue)'
+						sh './jenkins/scripts/kill.sh'
+					}
+				}
+				stage ('Headless Browser Test') {
+					agent {
+						docker {
+							image 'maven:3-alphine'
+							args '-v /root/.m2:/root/.m2'
+						}
+					}
+					steps {
+						sh 'mvn -B -DskipTests clean package'
+						sh 'mvn test'
+					}
+					post {
+						always {
+							junit 'target/surefire-reports/*.xml'
+						}
+					}
+				}
+			}
+		}
 		
 	}	
 	post {
