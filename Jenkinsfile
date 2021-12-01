@@ -20,4 +20,3 @@ pipeline {
 	}
 }
 
-#jenkins test
