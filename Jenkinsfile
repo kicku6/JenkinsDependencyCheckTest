@@ -32,18 +32,16 @@ pipeline {
 				always {
 					junit testResults: 'logs/unitreport.xml'
 				}
-			    }
-       			 }
-		stage('Start Integration Test'){
+		    }
+   		 }
+		stage('Start Integration Test') 
+		{
 				steps {
-					agent any
-					steps {
 						sh 'chmod +x ./jenkins/scripts/deploy.sh'
 						sh './jenkins/scripts/deploy.sh'
 						input message: 'Finished using the web site? (Click "Proceed" to contiue)'
 						
 					}
-				}
 		}
 		stage ('Headless Browser Test') {
 			agent {
