@@ -37,8 +37,8 @@ pipeline {
 		stage('Start Integration Test') 
 		{
 				steps {
-						sh 'chmod +x ./jenkins/scripts/deploy.sh'
-						sh './jenkins/scripts/deploy.sh'
+						sh 'chmod +x ./var/jenkins_home/workspace/3203labtestprep@script/jenkins/scripts/deploy.sh'
+						sh './var/jenkins_home/workspace/3203labtestprep@script/jenkins/scripts/deploy.sh'
 						input message: 'Finished using the web site? (Click "Proceed" to contiue)'
 						
 					}
