@@ -49,8 +49,9 @@ stage('Unit Test') {
         
     stage('Start Integration Docker') {
 		steps {
-		    sh 'chmod +x ./jenkins/scripts/deploy.sh'
-			sh './jenkins/scripts/deploy.sh'
+			sh "pwd"
+		    sh 'chmod +x ./deploy.sh'
+			sh './deploy.sh'
 			timeout(time: 1, unit: 'MINUTES') {
                 input 'Is the test environment ready?'
             }		
@@ -73,8 +74,8 @@ stage('Unit Test') {
 			always 
 			    {
 			        junit 'target/surefire-reports/*.xml'
-					sh 'chmod +x ./jenkins/scripts/kill.sh'
-					sh './jenkins/scripts/kill.sh'
+					sh 'chmod +x ./kill.sh'
+					sh './kill.sh'
                 }
             }
 	    }
