@@ -49,7 +49,6 @@ stage('Unit Test') {
         
     stage('Start Integration Docker') {
 		steps {
-			sh "pwd"
 		    sh 'chmod +x ./deploy.sh'
 			sh './deploy.sh'
 			timeout(time: 1, unit: 'MINUTES') {
