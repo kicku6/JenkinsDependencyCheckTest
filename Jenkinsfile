@@ -73,8 +73,6 @@ stage('Unit Test') {
 			always 
 			    {
 			        junit 'target/surefire-reports/*.xml'
-					sh 'chmod +x ./kill.sh'
-					sh './kill.sh'
                 }
             }
 	    }
