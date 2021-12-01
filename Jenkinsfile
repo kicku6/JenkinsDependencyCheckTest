@@ -16,12 +16,11 @@ stage('Build') {
 stage('Dependency Check'){
     steps {
         echo 'Initializing OWASP Dependency Check'
-        dependencyCheck additionalArguments: '--format HTML --format XML --out /var/jenkins_home/logs/dependency_check/${BUILD_NUMBER}', odcInstallation: 'Default'
+        dependencyCheck additionalArguments: '--format HTML --format XML', odcInstallation: 'Default'
     }
     
     post {
         always {
-                sh 'cp /var/jenkins_home/logs/dependency_check/${BUILD_NUMBER}/dependency-check-report.xml ${WORKSPACE}'
                 dependencyCheckPublisher pattern: 'dependency-check-report.xml'
             }
         }
@@ -37,13 +36,13 @@ stage('Unit Test') {
     steps {
         sh 'composer install'
         echo 'Testing Phase'
-        sh './vendor/bin/phpunit --log-junit /var/jenkins_home/logs/tests/unit/${BUILD_NUMBER}_unitreport.xml -c tests/phpunit.xml tests'
+        sh './vendor/bin/phpunit --log-junit logs/unitreport.xml -c tests/phpunit.xml tests'
     }
     
     post {
         always {
-                sh 'cp /var/jenkins_home/logs/tests/unit/${BUILD_NUMBER}_unitreport.xml ${WORKSPACE}'
-                junit testResults: '*.xml'
+                
+                junit testResults: 'logs/unitreport.xml'
             }
         }
     }
