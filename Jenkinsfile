@@ -49,11 +49,11 @@ stage('Unit Test') {
         
     stage('Start Integration Docker') {
 		steps {
+		    sh 'pwd'
 		    sh 'chmod +x ./deploy.sh'
 			sh './deploy.sh'
-			timeout(time: 1, unit: 'MINUTES') {
-                input 'Is the test environment ready?'
-            }		
+
+        	
 		}
 	}
     stage('Headless Browser Test') {
@@ -76,6 +76,34 @@ stage('Unit Test') {
                 }
             }
 	    }
+	stage ('Checkout Analysis') {
+	    steps {
+	        git branch:'master', url: 'https://github.com/ScaleSec/vulnado.git'
+	    }
+	}
+	stage ('Build Analysis') {
+	    steps {
+	        sh '/var/jenkins_home/apache-maven-3.6.3/bin/mvn --batch-mode -V -U -e clean verify -Dsurefire.useFile=false -Dmaven.test.failure.ignore'
+	    }
+	}
+	stage ('Final Analysis') {
+	    steps {
+	        sh '/var/jenkins_home/apache-maven-3.6.3/bin/mvn --batch-mode -V -U -e checkstyle:checkstyle pmd:pmd pmd:cpd findbugs:findbugs'
+	    }
+	    
+	    post {
+	        always {
+    	    recordIssues enabledForFailure: true, tools: [mavenConsole(), java(), javaDoc()] 
+    	    recordIssues enabledForFailure: true, tool: checkStyle()
+    	    recordIssues enabledForFailure: true, tool: spotBugs(pattern:'**/target/findbugsXml.xml')
+    	    recordIssues enabledForFailure: true, tool: cpd(pattern: '**/target/cpd.xml')
+    	    recordIssues enabledForFailure: true, tool: pmdParser(pattern: '**/target/pmd.xml')
+    	   }
+	    }
+	    
+	}
+	
+	
     }
 	post {
 		success {
