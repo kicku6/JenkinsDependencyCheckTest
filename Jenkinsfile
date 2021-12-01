@@ -103,12 +103,34 @@ stage('Unit Test') {
 	    
 	}
 	
+	stage ('Sonar Checkout') {
+	    steps {
+	        git branch:'master', url: 'https://github.com/OWASP/Vulnerable-Web-Application.git'
+	    }
+	}
+	stage ('Sonar Quality check') {
+	    steps {
+	        script {
+	            def scannerHome = tool 'SonarQube'
+	                withSonarQubeEnv('SonarQube'){
+	                    sh "${scannerHome}/bin/sonar-scanner -Dsonar.projectKey=OWASP -Dsonar.sources=. -Dsonar.host.url=http://192.168.168.135:9000 -Dsonar.login=51a75b02991b37b5d423c83cb4ba87650078231a"
+	                }
+	        }
+	    }
+	    post {
+	        always {
+	            recordIssues enabledForFailure: true, tool: sonarQube()
+	        }
+	    }
+	}
+	
 	
     }
 	post {
 		success {
-					sh 'chmod +x ./kill.sh'
-					sh './kill.sh'
+		            
+					sh 'chmod +x /var/jenkins_home/workspace/3203labtestprep@2/kill.sh'
+					sh '/var/jenkins_home/workspace/3203labtestprep@2/kill.sh'
 				}
 		}
 			
